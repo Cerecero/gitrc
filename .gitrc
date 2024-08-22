@@ -1,0 +1,208 @@
+#!/bin/bash
+
+# add branch name in prompt
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+
+# adding
+
+alias ga='git add'                 # Add changes to the index
+#alias gaa='git add --all'          # Add all changes, including untracked files
+alias gaa='git add .'              # Add all changes, including untracked files
+#alias gai='git add -i'             # Interactively add changes to the index
+#alias gau='git add -u'             # Add all changes, except untracked files
+
+# branching, blaming, bisecting
+
+alias gb='git branch'              # List, create, or delete branches
+#alias gba='git branch -a'          # List all branches, including remote ones
+#alias gba='git branch -av'         # List all branches, including remote ones with verbose output
+#alias gbd='git branch -D'          # Force delete a branch
+#alias gbd='git branch -d'          # Delete a branch (safe delete)
+#alias gblm='git blame'             # Show what revision and author last modified each line of a file
+#alias gbm='git branch --merged'    # List branches that are merged into the current branch
+#alias gbum='git branch --unmerged' # List branches that are not merged into the current branch
+#alias gbs='git bisect start'       # Start the bisecting process
+#alias gbss='git bisect start $*'   # Start bisecting with optional bad and good revisions
+#alias gbsb='git bisect bad'        # Mark the current commit as 'bad'
+#alias gbsg='git bisect good'       # Mark the current commit as 'good'
+#alias gbsr='git bisect reset'      # Exit bisect mode and return to the original branch
+#alias gbsc='git bisect skip'       # Skip testing the current commit
+#alias gbsl='git bisect log'        # Show the bisect log
+#alias gbsre='git bisect replay'    # Replay the bisect session
+#alias gbsterm='git bisect terms'   # Show or change terms used to mark good/bad commits
+#alias gbsv='git bisect visualize'  # Launch gitk to visualize the bisect process
+
+# committing, checking, config, cleaning, cherry-picking
+
+alias gca='git commit -a'           # Add and commit all changes
+alias gco='git commit'              # Record changes to the repository
+alias gcomm='git commit -m'          # Record changes with message
+#alias gcoa='git commit --amend'     # Amend the previous commit
+#alias gcoam='git commit -am'        # Add and commit changes with a message
+#alias gc='git checkout'        # Create and checkout a new branch
+#alias gcb='git checkout -b'        # Create and checkout a new branch
+#alias gcbk='git checkout -'        # Checkout the previous branch (go BacK)
+#alias gcf='git config'             # Get and set repository or global options
+#alias gcfe='git config --global user.email'   # Set the global user email
+#alias gcfu='git config --global user.name'    # Set the global user name
+#alias gcl='git clone'              # Clone a repository into a new directory
+#alias gclean='git clean -fd'       # Remove untracked files and directories
+#alias gcod='git checkout dev'      # Checkout the dev branch
+#alias gcom='git checkout main'     # Checkout the main branch
+#alias gcp='git cherry-pick'        # Apply the changes introduced by some existing commits
+#alias gcpa='git cherry-pick --abort'   # Abort the cherry-pick operation and restore the original branch
+#alias gcpc='git cherry-pick --continue'   # Continue the cherry-pick operation in progress
+
+# deleting
+
+function gdl(){                     # Delete all local branches that have been merged into the current branch
+    BASE_BRANCH=$1
+    if [[ -z $BASE_BRANCH ]];then
+        echo "ERROR: No base branch argument provided."
+        return 1
+    fi
+    read -p "Are you sure you want to delete all local branches that have been merged into $BASE_BRANCH? [Y/y] " CHOICE
+    if [[ $CHOICE != "y" ]] && [[  $CHOICE != "Y" ]]; then
+        echo "Exiting without continuing."
+        return 0
+    fi
+    git branch --merged $BASE_BRANCH | grep -v "^\* $BASE_BRANCH" | xargs -n 1 -r git branch -d
+}
+
+# diffing
+
+#alias gd='git diff'                # Show changes between commits, commit and working tree, etc.
+#alias gdc='git diff --cached'      # Show changes between commits and the index
+#alias gds='git diff --staged'      # Show changes between the index and the latest commit
+#alias gdsum='git diff --stat'       # Show a summary of changes between commits
+
+# fetching
+
+#alias gf='git fetch'               # Download objects and refs from a remote repository
+#alias gfp='git fetch --prune'      # Download objects and refs from a remote repository and remove remote branches that no longer exist
+#alias gfa='git fetch --all'        # Download all objects and refs from all remotes
+
+# initializing
+
+#alias gi='git init'                # Create an empty Git repository or reinitialize an existing one
+
+# ls-ing
+
+#alias gld='git ls-files --debug'   # Show information about files in the index and the working tree with debug info
+#alias glfn='git ls-files --full-name'    # Show full file names
+#alias gls='git ls-files'           # Show information about files in the index and the working tree
+#alias glsio='git ls-files --ignored --others --exclude-standard'
+
+# logging
+
+#alias ggl='git log --oneline --graph --decorate'         # Show a concise log with graph
+#alias gdog='git log --oneline --all --graph --decorate'   # Show a concise log with graph
+#alias glo='git log --oneline --decorate --all'         # Show a concise log with decorations
+#alias glog='git log'               # Show the commit logs
+#alias gloga='git log --oneline --graph --decorate --all'     # Show logs for all refs
+#alias glogb='git log --oneline --graph --decorate --branches'    # Show logs for local branches
+#alias glogf='git log --follow'     # Show the commit logs for a file, including renames
+#alias glogp='git log -p'           # Show the commit logs with patches
+#alias glogr='git log --oneline --graph --decorate --remotes'    # Show logs for remote branches
+#alias glogt='git log --oneline --graph --decorate --tags'       # Show logs for tags
+
+# merging
+
+#alias gm='git merge'               # Join two or more development histories together
+#alias gma='git merge --abort'      # Abort the current merge and restore the original branch
+#alias gmc='git merge --continue'   # Continue a merge after resolving conflicts
+#alias gmncnf='git merge --no-commit --no-ff'    # Merge without committing
+
+# pushing/pulling
+
+#alias gpull='git pull'             # Shortcut for git pull
+#alias gpushu='git push --set-upstream'          # Push the current branch and set the upstream
+#alias gpushuo='git push --set-upstream origin'          # Push the current branch and set the upstream
+
+function gpush(){                   # Push the current branch to the remote, and set the upstream if new
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    if [[ -z $CURRENT_BRANCH ]];then
+        echo "Failed to get current branch. Is the current directory a git repo?"
+    fi
+    if [[ $CURRENT_BRANCH == "main" ]];then
+        echo "This #alias cannot act on main branch. Exiting without pushing."
+        return 1
+    fi
+    if [[ $CURRENT_BRANCH == "development" ]];then
+        echo "This #alias cannot act on development branch. Exiting without pushing."
+        return 1
+    fi
+    UPSTREAM=$(git for-each-ref --format='%(upstream:short)' "$(git symbolic-ref -q HEAD)")
+    if [[ -z $UPSTREAM ]];then
+        git push -u origin $CURRENT_BRANCH
+    else
+        git push
+    fi
+}
+
+# remotes
+
+#alias gr='git remote -v'           # List remote repositories
+
+# rebasing
+
+#alias gra='git rebase --abort'     # Abort the current rebase
+#alias grb='git rebase'             # Reapply commits on top of another base tip
+#alias grbi='git rebase -i'         # Interactively rebase
+#alias grc='git rebase --continue'  # Continue a rebase after resolving conflicts
+
+# resetting
+
+#alias greset='git reset'           # Reset current HEAD to the specified state
+#alias gresetsh='git reset --soft HEAD~'   # Soft reset to the previous commit
+#alias grhard='git reset --hard'    # Hard reset to the specified state
+
+# reflog
+
+#alias grl='git reflog'             # Show the log of the current branch
+
+# status, showing
+
+alias gstat='git status'              # Show the working tree status
+#alias gsh='git show'               # Show information about a commit
+
+# submodules
+
+#alias gsm='git submodule'          # Initialize, update or inspect submodules
+#alias gsma='git submodule add'     # Add a new submodule
+#alias gsmi='git submodule init'    # Initialize submodules
+#alias gsms='git submodule sync'    # Synchronize submodules' remote URL configuration
+#alias gsmu='git submodule update'  # Update submodules
+#alias gsmui='git submodule update --init'  # Update submodules and initialize if needed
+#alias gsmuir='git submodule update --init --recursive'    # Update submodules and initialize recursively if needed
+
+# stashing
+
+#alias gst='git stash'              # Stash changes in a dirty working directory
+#alias gsta='git stash apply'       # Apply a stash
+#alias gstc='git stash clear'       # Remove all stashes
+#alias gstd='git stash drop'        # Delete the most recent stash
+#alias gstl='git stash list'        # List all stashes
+#alias gstp='git stash pop'         # Apply and remove the most recent stash
+
+# showing
+
+#alias gsv='git show -U0'           # Show a diff of a commit
+#alias gsvv='git show -U0 --color-words'    # Show a word-based diff
+
+# Custom git_push function
+git_push() {
+    # Check if the upstream remote exists
+    if ! git rev-parse --abbrev-ref --symbolic-full-name @{u} &>/dev/null; then
+        echo "No upstream remote found. Creating one..."
+        git push -u origin "$(git symbolic-ref --short HEAD)"
+    else
+        git push
+    fi
+}
+
+# Source this file to activate its aliases and functions
+
