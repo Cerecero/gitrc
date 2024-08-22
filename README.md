@@ -1,0 +1,2 @@
+# gitrc
+.gitrc aliases
